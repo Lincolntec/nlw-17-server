@@ -7,6 +7,7 @@ import {
 import { createGoal } from '../functions/create-goal'
 import z from 'zod'
 import { getWeekPendingGoals } from '../functions/get-week-pending-goals'
+import { CreateGoalCompletion } from '../functions/create-goal-completion'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -18,6 +19,24 @@ app.get('/pending-goals', async () => {
 
   return { pendingGoals }
 })
+
+app.post(
+  '/completions',
+  {
+    schema: {
+      body: z.object({
+        goalId: z.string(),
+      }),
+    },
+  },
+  async request => {
+    const { goalId } = request.body
+
+    await CreateGoalCompletion({
+      goalId,
+    })
+  }
+)
 
 app.post(
   '/goals',
